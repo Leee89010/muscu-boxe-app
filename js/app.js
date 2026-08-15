@@ -405,9 +405,13 @@ function renderExerciseList() {
         <button class="rm-set" onclick="removeSetRow('${ex.id}',${i})">×</button>
       </div>`).join('');
 
-    return `
+return `
       <div class="card exercise-card">
         <div class="card-title"><h3>${ex.name}</h3></div>
+        <div class="exercise-visual-row">
+          ${pictogramSVG(ex.pattern, RING_COLORS.kcal)}
+          ${muscleDiagramSVG(ex.muscleGroups)}
+        </div>
         <div class="exercise-target">${ex.sets} × ${ex.repsMin === ex.repsMax ? ex.repsMin : ex.repsMin + '–' + ex.repsMax}${ex.perSide ? '/côté' : ''} · repos ${ex.rest}s · ${ex.muscles}</div>
         ${rows}
         <button class="add-set-btn" onclick="addSetRow('${ex.id}')">+ Ajouter une série</button>
@@ -415,7 +419,6 @@ function renderExerciseList() {
       </div>`;
   }).join('');
 }
-
 function updateSet(exId, idx, field, val) {
   state.currentSets[state.currentProgram][exId][idx][field] = val;
 }
