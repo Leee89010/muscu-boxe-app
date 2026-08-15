@@ -444,15 +444,28 @@ function renderExerciseList() {
         <button class="rm-set" onclick="removeSetRow('${ex.id}',${i})">×</button>
       </div>`).join('');
 
-    return `
+   return `
       <div class="card exercise-card">
         <div class="card-title"><h3>${ex.name}</h3></div>
+        <div class="exercise-visual-row">
+          <div class="visual-tile">
+            ${pictogramSVG(ex.pattern, RING_COLORS.kcal, ex.id)}
+            <span class="visual-caption">${PATTERN_LABELS[ex.pattern] || 'Mouvement'}</span>
+          </div>
+          <div class="visual-divider"></div>
+          <div class="visual-tile">
+            ${muscleDiagramSVG(ex.muscleGroups, ex.id)}
+            <span class="visual-caption">Muscles sollicités</span>
+          </div>
+        </div>
         <div class="exercise-target">${ex.sets} × ${ex.repsMin === ex.repsMax ? ex.repsMin : ex.repsMin + '–' + ex.repsMax}${ex.perSide ? '/côté' : ''} · repos ${ex.rest}s · ${ex.muscles}</div>
         ${rows}
         <button class="add-set-btn" onclick="addSetRow('${ex.id}')">+ Ajouter une série</button>
         ${best ? `<div class="pr-badge">🏆 Record : ${best.weight} kg × ${best.reps}</div>` : ''}
       </div>`;
   }).join('');
+
+  animateExerciseVisuals(prog.exercises);
 }
 
 function updateSet(exId, idx, field, val) {
