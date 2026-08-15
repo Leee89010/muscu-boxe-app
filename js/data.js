@@ -53,7 +53,7 @@ const WORKOUT_PROGRAM = {
     ],
   },
 };
-
+const PATTERN_LABELS = { push: 'Poussée', pull: 'Tirage', squat: 'Flexion jambes', raise: 'Élévation', rotate: 'Rotation', hold: 'Gainage isométrique' };
 const PLANNING_DEFAULT = {
   LUN: 'boxe', MAR: 'boxe', MER: 'A', JEU: 'boxe', VEN: 'B', SAM: 'repos', DIM: 'C',
 };
