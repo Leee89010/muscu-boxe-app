@@ -398,6 +398,7 @@ nav.bottom-nav button.active { color: var(--blue); }
 @media (min-width: 640px) {
   main { padding-top: 24px; }
 }
+
 .exercise-visual-row {
   display: flex;
   align-items: center;
