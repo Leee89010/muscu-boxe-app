@@ -58,7 +58,15 @@ const PLANNING_DEFAULT = {
   LUN: 'boxe', MAR: 'boxe', MER: 'A', JEU: 'boxe', VEN: 'B', SAM: 'repos', DIM: 'C',
 };
 const DAY_LABELS = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
-
+const FOOD_DATABASE = [
+  { name: 'Café (noir)', unit: 'ml', kcal100: 2, protein100: 0.3, carbs100: 0, fat100: 0 },
+  { name: 'Steak de bœuf', unit: 'g', kcal100: 250, protein100: 26, carbs100: 0, fat100: 15 },
+  { name: 'Avocat', unit: 'g', kcal100: 160, protein100: 2, carbs100: 8.5, fat100: 14.7 },
+  { name: "Huile d'olive", unit: 'g', kcal100: 884, protein100: 0, carbs100: 0, fat100: 100 },
+  { name: 'Poulet (blanc, cuit)', unit: 'g', kcal100: 165, protein100: 31, carbs100: 0, fat100: 3.6 },
+  { name: 'Haricots verts (cuits)', unit: 'g', kcal100: 31, protein100: 1.8, carbs100: 7, fat100: 0.2 },
+  { name: 'Riz thaï (cuit)', unit: 'g', kcal100: 130, protein100: 2.7, carbs100: 28, fat100: 0.3 },
+];
 function defaultData() {
   return {
     version: APP_VERSION,
