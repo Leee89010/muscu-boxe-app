@@ -206,11 +206,24 @@ function selectTrainingTab(tab) {
 }
 function pictogramSVG(pattern, color) {
   if (pattern === 'rotate') {
-    return `<svg width="44" height="44" viewBox="0 0 44 44">
+    return `<svg width="40" height="40" viewBox="0 0 44 44">
       <circle cx="22" cy="22" r="13" fill="none" stroke="var(--border)" stroke-width="2" stroke-dasharray="3 3"/>
-      <circle cx="22" cy="22" r="3" fill="${color}" class="picto-rotate" style="transform-origin:22px 22px;"/>
+      <g class="picto-rotate" style="transform-origin:22px 22px;">
+        <circle cx="22" cy="9" r="3" fill="${color}"/>
+      </g>
     </svg>`;
   }
+  if (pattern === 'hold') {
+    return `<svg width="40" height="40" viewBox="0 0 44 44">
+      <rect x="14" y="14" width="16" height="16" rx="4" fill="${color}" class="picto-hold" style="transform-origin:22px 22px;"/>
+    </svg>`;
+  }
+  const animClass = 'picto-' + pattern;
+  return `<svg width="40" height="40" viewBox="0 0 44 44">
+    <line x1="8" y1="22" x2="36" y2="22" stroke="var(--border)" stroke-width="2"/>
+    <circle cx="22" cy="22" r="5" fill="${color}" class="${animClass}"/>
+  </svg>`;
+}
   if (pattern === 'hold') {
     return `<svg width="44" height="44" viewBox="0 0 44 44">
       <rect x="14" y="14" width="16" height="16" rx="4" fill="${color}" class="picto-hold" style="transform-origin:22px 22px;"/>
@@ -224,7 +237,7 @@ function pictogramSVG(pattern, color) {
 }
 function muscleDiagramSVG(active) {
   const on = z => active.includes(z) ? 'var(--blue)' : '#2a2f38';
-  return `<svg width="56" height="104" viewBox="0 0 56 104">
+  return `<svg width="46" height="86" viewBox="0 0 56 104">
     <circle cx="28" cy="9" r="7" fill="#3a4048"/>
     <circle cx="13" cy="20" r="4" fill="${on('epaules')}"/>
     <circle cx="43" cy="20" r="4" fill="${on('epaules')}"/>
