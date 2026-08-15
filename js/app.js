@@ -258,12 +258,18 @@ function setBar(prefix, val, target, suffix) {
 function openAddFood(mealKey) {
   const holder = document.getElementById('add-food-form-' + mealKey);
   if (holder.innerHTML) { holder.innerHTML = ''; return; }
+  const options = FOOD_DATABASE.map((f, i) => `<option value="${i}">${f.name}</option>`).join('');
   holder.innerHTML = `
     <div class="mt-16" style="border-top:1px solid var(--border); padding-top:12px;">
+      <label>Aliment pré-enregistré</label>
+      <select id="nf-db-${mealKey}" onchange="applyFoodDb('${mealKey}')">
+        <option value="">— Aliment personnalisé —</option>
+        ${options}
+      </select>
       <label>Nom de l'aliment</label>
       <input type="text" id="nf-name-${mealKey}" placeholder="Poulet">
       <div class="field-grid">
-        <div><label>Quantité</label><input type="number" id="nf-qty-${mealKey}" placeholder="180"></div>
+        <div><label>Quantité</label><input type="number" id="nf-qty-${mealKey}" placeholder="180" oninput="applyFoodDb('${mealKey}')"></div>
         <div><label>Unité</label><input type="text" id="nf-unit-${mealKey}" placeholder="g" value="g"></div>
       </div>
       <div class="field-grid-3">
@@ -274,6 +280,21 @@ function openAddFood(mealKey) {
       <label>Lipides (g)</label><input type="number" id="nf-fat-${mealKey}">
       <button class="btn btn-primary mt-16" onclick="submitFood('${mealKey}')">Ajouter ce repas</button>
     </div>`;
+}
+
+function applyFoodDb(mealKey) {
+  const sel = document.getElementById('nf-db-' + mealKey);
+  if (sel.value === '') return;
+  const food = FOOD_DATABASE[sel.value];
+  const qtyInput = document.getElementById('nf-qty-' + mealKey);
+  if (!qtyInput.value) qtyInput.value = 100;
+  const qty = Number(qtyInput.value);
+  document.getElementById('nf-name-' + mealKey).value = food.name;
+  document.getElementById('nf-unit-' + mealKey).value = food.unit;
+  document.getElementById('nf-kcal-' + mealKey).value = Math.round(food.kcal100 * qty / 100);
+  document.getElementById('nf-protein-' + mealKey).value = Math.round(food.protein100 * qty / 100 * 10) / 10;
+  document.getElementById('nf-carbs-' + mealKey).value = Math.round(food.carbs100 * qty / 100 * 10) / 10;
+  document.getElementById('nf-fat-' + mealKey).value = Math.round(food.fat100 * qty / 100 * 10) / 10;
 }
 
 function submitFood(mealKey) {
