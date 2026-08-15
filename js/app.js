@@ -104,7 +104,8 @@ function renderAccueil() {
 
   document.getElementById('today-label').textContent = 'Objectif ' + p.calorieTarget + ' kcal';
   document.getElementById('chk-creatine').checked = !!log.creatine;
-  document.getElementById('whey-count').textContent = log.wheyCount || 0;
+  const wheyGrams = (log.wheyCount || 0) * 30;
+document.getElementById('whey-count').textContent = (log.wheyCount || 0) + ' (' + wheyGrams + ' g)';
 
   // Rings
   const ringsData = [
