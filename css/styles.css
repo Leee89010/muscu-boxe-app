@@ -398,3 +398,26 @@ nav.bottom-nav button.active { color: var(--blue); }
 @media (min-width: 640px) {
   main { padding-top: 24px; }
 }
+.exercise-visual-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  margin-bottom: 10px;
+}
+
+@keyframes pictoPush { 0%,100% { transform: translateY(6px); } 50% { transform: translateY(-6px); } }
+@keyframes pictoPull { 0%,100% { transform: translateY(-6px); } 50% { transform: translateY(6px); } }
+@keyframes pictoSquat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(9px); } }
+@keyframes pictoRaise { 0%,100% { transform: translateX(0); } 50% { transform: translateX(9px); } }
+@keyframes pictoRotate { 0% { transform: rotate(0deg) translateX(13px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(13px) rotate(-360deg); } }
+@keyframes pictoHold { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.65; } }
+
+.picto-push { animation: pictoPush 1.4s ease-in-out infinite; }
+.picto-pull { animation: pictoPull 1.4s ease-in-out infinite; }
+.picto-squat { animation: pictoSquat 1.6s ease-in-out infinite; }
+.picto-raise { animation: pictoRaise 1.4s ease-in-out infinite; }
+.picto-rotate { animation: pictoRotate 2.2s linear infinite; transform-box: fill-box; }
+.picto-hold { animation: pictoHold 1.8s ease-in-out infinite; transform-box: fill-box; }
