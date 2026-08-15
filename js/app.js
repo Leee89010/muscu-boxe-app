@@ -258,7 +258,8 @@ function setBar(prefix, val, target, suffix) {
 function openAddFood(mealKey) {
   const holder = document.getElementById('add-food-form-' + mealKey);
   if (holder.innerHTML) { holder.innerHTML = ''; return; }
-  const options = FOOD_DATABASE.map((f, i) => `<option value="${i}">${f.name}</option>`).join('');
+  const relevant = FOOD_DATABASE.filter(f => f.categories.includes(mealKey));
+  const options = relevant.map(f => `<option value="${f.name}">${f.name}</option>`).join('');
   holder.innerHTML = `
     <div class="mt-16" style="border-top:1px solid var(--border); padding-top:12px;">
       <label>Aliment pré-enregistré</label>
@@ -285,7 +286,8 @@ function openAddFood(mealKey) {
 function applyFoodDb(mealKey) {
   const sel = document.getElementById('nf-db-' + mealKey);
   if (sel.value === '') return;
-  const food = FOOD_DATABASE[sel.value];
+  const food = FOOD_DATABASE.find(f => f.name === sel.value);
+  if (!food) return;
   const qtyInput = document.getElementById('nf-qty-' + mealKey);
   if (!qtyInput.value) qtyInput.value = 100;
   const qty = Number(qtyInput.value);
