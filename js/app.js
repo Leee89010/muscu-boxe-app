@@ -51,10 +51,25 @@ function initNav() {
 }
 
 function switchView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById('view-' + name).classList.add('active');
+  const current = document.querySelector('.view.active');
+  const next = document.getElementById('view-' + name);
+  if (current === next) return;
+
   document.querySelectorAll('nav.bottom-nav button').forEach(b => b.classList.toggle('active', b.dataset.view === name));
-  window.scrollTo(0, 0);
+
+  gsap.to(current, {
+    opacity: 0,
+    y: -8,
+    duration: 0.15,
+    ease: 'power1.in',
+    onComplete: () => {
+      current.classList.remove('active');
+      next.classList.add('active');
+      gsap.fromTo(next, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' });
+      window.scrollTo(0, 0);
+    },
+  });
+
   if (name === 'progression') renderProgression();
   if (name === 'entrainement') renderEntrainement();
 }
