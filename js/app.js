@@ -358,6 +358,67 @@ function initEntrainement() {
   document.getElementById('save-muscu-session').addEventListener('click', saveMuscuSession);
   document.getElementById('save-boxe-session').addEventListener('click', saveBoxeSession);
 }
+function pictogramSVG(pattern, color, exId) {
+  if (pattern === 'rotate') {
+    return `<svg width="40" height="40" viewBox="0 0 44 44">
+      <circle cx="22" cy="22" r="13" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <g data-picto="${exId}" style="transform-origin:22px 22px;">
+        <circle cx="22" cy="9" r="3.5" fill="${color}"/>
+      </g>
+    </svg>`;
+  }
+  if (pattern === 'hold') {
+    return `<svg width="40" height="40" viewBox="0 0 44 44">
+      <rect data-picto="${exId}" x="14" y="14" width="16" height="16" rx="4" fill="${color}" style="transform-origin:22px 22px;"/>
+    </svg>`;
+  }
+  return `<svg width="40" height="40" viewBox="0 0 44 44">
+    <line x1="8" y1="22" x2="36" y2="22" stroke="var(--border)" stroke-width="1.5"/>
+    <circle data-picto="${exId}" cx="22" cy="22" r="5.5" fill="${color}"/>
+  </svg>`;
+}
+
+function muscleDiagramSVG(active, exId) {
+  const on = z => active.includes(z);
+  const fill = z => on(z) ? 'var(--blue)' : '#2a2f38';
+  const cls = z => on(z) ? `class="muscle-active" data-ex="${exId}"` : '';
+  return `<svg width="46" height="86" viewBox="0 0 56 104">
+    <circle cx="28" cy="9" r="7" fill="#3a4048"/>
+    <circle ${cls('epaules')} cx="13" cy="20" r="4" fill="${fill('epaules')}"/>
+    <circle ${cls('epaules')} cx="43" cy="20" r="4" fill="${fill('epaules')}"/>
+    <rect ${cls('pectoraux')} x="18" y="17" width="20" height="13" rx="3" fill="${fill('pectoraux')}"/>
+    <rect ${cls('dos')} x="14" y="17" width="4" height="25" rx="2" fill="${fill('dos')}"/>
+    <rect ${cls('abdominaux')} x="18" y="30" width="20" height="13" rx="3" fill="${fill('abdominaux')}"/>
+    <rect ${cls('bras')} x="8" y="20" width="6" height="14" rx="3" fill="${fill('bras')}"/>
+    <rect ${cls('bras')} x="42" y="20" width="6" height="14" rx="3" fill="${fill('bras')}"/>
+    <rect ${cls('avantbras')} x="7" y="34" width="5" height="12" rx="2" fill="${fill('avantbras')}"/>
+    <rect ${cls('avantbras')} x="44" y="34" width="5" height="12" rx="2" fill="${fill('avantbras')}"/>
+    <rect ${cls('ischiosfessiers')} x="17" y="43" width="22" height="8" rx="3" fill="${fill('ischiosfessiers')}"/>
+    <rect ${cls('quadriceps')} x="18" y="51" width="8" height="20" rx="3" fill="${fill('quadriceps')}"/>
+    <rect ${cls('quadriceps')} x="30" y="51" width="8" height="20" rx="3" fill="${fill('quadriceps')}"/>
+    <rect ${cls('mollets')} x="19" y="72" width="6" height="16" rx="3" fill="${fill('mollets')}"/>
+    <rect ${cls('mollets')} x="31" y="72" width="6" height="16" rx="3" fill="${fill('mollets')}"/>
+  </svg>`;
+}
+function animateExerciseVisuals(exercises) {
+  exercises.forEach(ex => {
+    const target = `[data-picto="${ex.id}"]`;
+    if (ex.pattern === 'push') {
+      gsap.to(target, { y: -7, duration: 0.9, ease: 'power1.inOut', repeat: -1, yoyo: true });
+    } else if (ex.pattern === 'pull') {
+      gsap.to(target, { y: 7, duration: 0.9, ease: 'power1.inOut', repeat: -1, yoyo: true });
+    } else if (ex.pattern === 'squat') {
+      gsap.to(target, { y: 9, scaleY: 0.85, duration: 1.1, ease: 'sine.inOut', repeat: -1, yoyo: true, transformOrigin: 'center' });
+    } else if (ex.pattern === 'raise') {
+      gsap.to(target, { x: 9, duration: 0.9, ease: 'sine.inOut', repeat: -1, yoyo: true });
+    } else if (ex.pattern === 'rotate') {
+      gsap.to(target, { rotation: 360, duration: 2.2, ease: 'none', repeat: -1, transformOrigin: 'center' });
+    } else if (ex.pattern === 'hold') {
+      gsap.to(target, { scale: 1.12, opacity: 0.6, duration: 1.3, ease: 'sine.inOut', repeat: -1, yoyo: true, transformOrigin: 'center' });
+    }
+    gsap.to(`[data-ex="${ex.id}"]`, { opacity: 0.55, duration: 1.1, ease: 'sine.inOut', repeat: -1, yoyo: true, stagger: 0.12 });
+  });
+}
 
 function renderEntrainement() {
   renderExerciseList();
