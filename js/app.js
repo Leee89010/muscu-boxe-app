@@ -102,12 +102,14 @@ function bumpWhey(delta) {
   Store.save();
   renderAccueil();
 }
+
 function bumpWater(amount, reset) {
   const log = Store.getDailyLog(Store.today());
   log.water = reset ? 0 : Math.round(((log.water || 0) + amount) * 100) / 100;
   Store.save();
   renderAccueil();
 }
+
 function ringSVG(pct, color, size = 62, stroke = 7) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
