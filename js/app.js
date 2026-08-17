@@ -7,6 +7,7 @@ const MEAL_LABELS = { petitDej: '🌅 Petit-déjeuner', dejeuner: '☀️ Déjeu
 const RING_COLORS = { kcal: '#3d7fff', protein: '#34c77b', carbs: '#ff9f43', fat: '#e6394a' };
 
 let state = { trainingTab: 'muscu', currentProgram: 'A', currentSets: {} };
+let restTimerInterval = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   Store.load();
@@ -357,6 +358,7 @@ function initEntrainement() {
   });
   document.getElementById('save-muscu-session').addEventListener('click', saveMuscuSession);
   document.getElementById('save-boxe-session').addEventListener('click', saveBoxeSession);
+  document.getElementById('rest-timer-skip').addEventListener('click', hideRestTimer);
 }
 function pictogramSVG(pattern, color, exId) {
   if (pattern === 'rotate') {
@@ -455,7 +457,37 @@ function animateExerciseVisuals(exercises) {
 function renderEntrainement() {
   renderExerciseList();
 }
+function startRestTimer(seconds, label) {
+  clearInterval(restTimerInterval);
+  const bar = document.getElementById('rest-timer-bar');
+  const countEl = document.getElementById('rest-timer-count');
+  const labelEl = document.getElementById('rest-timer-label');
+  let remaining = seconds;
+  labelEl.textContent = 'Repos · ' + label;
+  countEl.textContent = remaining;
+  countEl.classList.remove('ending');
+  gsap.killTweensOf(bar);
+  bar.style.display = 'flex';
+  gsap.fromTo(bar, { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' });
 
+  restTimerInterval = setInterval(() => {
+    remaining--;
+    countEl.textContent = Math.max(remaining, 0);
+    if (remaining <= 5) countEl.classList.add('ending');
+    if (remaining <= 0) {
+      clearInterval(restTimerInterval);
+      if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      countEl.textContent = 'Go !';
+      setTimeout(hideRestTimer, 1200);
+    }
+  }, 1000);
+}
+
+function hideRestTimer() {
+  clearInterval(restTimerInterval);
+  const bar = document.getElementById('rest-timer-bar');
+  gsap.to(bar, { y: 60, opacity: 0, duration: 0.3, ease: 'power1.in', onComplete: () => { bar.style.display = 'none'; } });
+}
 function renderExerciseList() {
   const prog = WORKOUT_PROGRAM[state.currentProgram];
   const list = document.getElementById('exercise-list');
@@ -493,6 +525,7 @@ function renderExerciseList() {
         <div class="exercise-target">${ex.sets} × ${ex.repsMin === ex.repsMax ? ex.repsMin : ex.repsMin + '–' + ex.repsMax}${ex.perSide ? '/côté' : ''} · repos ${ex.rest}s · ${ex.muscles}</div>
         ${rows}
         <button class="add-set-btn" onclick="addSetRow('${ex.id}')">+ Ajouter une série</button>
+        <button class="btn btn-ghost btn-sm mt-8" onclick="startRestTimer(${ex.rest}, '${ex.name.replace(/'/g, "\\'")}')">⏱ Repos ${ex.rest}s</button>
         ${best ? `<div class="pr-badge">🏆 Record : ${best.weight} kg × ${best.reps}</div>` : ''}
       </div>`;
   }).join('');
