@@ -243,7 +243,31 @@ function selectProgram(letter) {
 function initAlimentation() {
   // event delegation set up in renderAlimentation via inline handlers
 }
+function renderRecipes() {
+  const box = document.getElementById('recipes-list');
+  box.innerHTML = RECIPE_DATABASE.map(r => `
+    <div class="card" style="margin-bottom:10px; background:var(--surface-2);">
+      <div class="card-title">
+        <h3 style="font-size:15px;">${r.name}</h3>
+        <button class="btn btn-primary btn-sm" onclick="addRecipeToMeal('${r.id}')">+ Ajouter</button>
+      </div>
+      <div class="small muted mt-8">${MEAL_LABELS[r.category]} · ${r.portions} portion${r.portions > 1 ? 's' : ''} · ${fmt(r.kcal)} kcal · P${fmt(r.protein)} G${fmt(r.carbs)} L${fmt(r.fat)} par portion</div>
+      <div class="small mt-8" style="color:var(--muted);">${r.ingredients.join(' · ')}</div>
+    </div>
+  `).join('');
+}
 
+function addRecipeToMeal(recipeId) {
+  const r = RECIPE_DATABASE.find(x => x.id === recipeId);
+  if (!r) return;
+  Store.getMealsForDate(Store.today())[r.category].push({
+    name: r.name, qty: 1, unit: ' portion', kcal: r.kcal, protein: r.protein, carbs: r.carbs, fat: r.fat,
+  });
+  Store.save();
+  renderAlimentation();
+  renderAccueil();
+  toast(r.name + ' ajouté à ton ' + MEAL_LABELS[r.category].replace(/^\S+\s/, ''));
+}
 function renderAlimentation() {
   const today = Store.today();
   document.getElementById('food-date-label').textContent = "Aujourd'hui";
@@ -274,6 +298,8 @@ function renderAlimentation() {
         <div id="add-food-form-${key}"></div>
       </div>`;
   }).join('');
+
+  renderRecipes();
 }
 
 function setBar(prefix, val, target, suffix) {
