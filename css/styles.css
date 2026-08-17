@@ -474,3 +474,10 @@ nav.bottom-nav button.active { color: var(--blue); }
 @keyframes blobFloat1 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(60px, 80px) scale(1.15); } }
 @keyframes blobFloat2 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-50px, -70px) scale(1.1); } }
 @keyframes blobFloat3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-40px, 50px) scale(0.9); } }
+.water-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.water-actions .btn { flex: 1; }
+#water-reset { flex: 0 0 auto; padding: 8px 12px; }
