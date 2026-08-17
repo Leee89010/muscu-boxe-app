@@ -1,233 +1,37 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>MUSCU × BOXE</title>
-<meta name="theme-color" content="#0a0c0f">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<link rel="stylesheet" href="css/styles.css">
-</head>
-<body>
+const CACHE_NAME = 'muscu-boxe-v2';
+const ASSETS = [
+  './',
+  './index.html',
+  './css/styles.css',
+  './js/data.js',
+  './js/app.js',
+  './manifest.json',
+  './icons/icon.svg',
+];
 
-<header class="topbar">
-  <div class="eyebrow" id="header-date"></div>
-  <h1>MUSCU <span class="accent">×</span> BOXE</h1>
-</header>
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).catch(() => {})
+  );
+  self.skipWaiting();
+});
 
-<main>
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
+  );
+  self.clients.claim();
+});
 
-  <!-- ================= ACCUEIL ================= -->
-  <section id="view-accueil" class="view active">
-
-    <div class="card">
-      <div class="card-title"><h3>Aujourd'hui</h3><span class="muted-label" id="today-label"></span></div>
-      <div class="rings-row" id="macro-rings"></div>
-      <div class="bar-row">
-        <div class="bar-label"><span>Eau</span><span class="value" id="water-value">0 / 2,8 L</span></div>
-        <div class="bar-track"><div class="bar-fill blue" id="water-bar" style="width:0%"></div></div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><h3>Compléments</h3></div>
-      <div class="row" style="margin-bottom:10px;">
-        <label style="margin:0; display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text);">
-          <input type="checkbox" id="chk-creatine"> Créatine prise aujourd'hui
-        </label>
-      </div>
-      <div class="row">
-        <span class="small muted">Whey</span>
-        <div class="btn-row" style="width:auto; gap:6px;">
-          <button class="btn btn-ghost btn-sm" id="whey-minus">−</button>
-          <span class="mono" id="whey-count" style="min-width:24px; text-align:center;">0</span>
-          <button class="btn btn-ghost btn-sm" id="whey-plus">+</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card" id="today-training-card">
-      <div class="card-title"><h3>Entraînement du jour</h3></div>
-      <div id="today-training-content"></div>
-    </div>
-
-    <div class="section-title">Résumé de la semaine</div>
-    <div class="card">
-      <div class="week-strip" id="week-strip"></div>
-      <div class="mt-16" id="week-summary-stats"></div>
-    </div>
-
-  </section>
-
-  <!-- ================= ALIMENTATION ================= -->
-  <section id="view-alimentation" class="view">
-    <div class="card">
-      <div class="card-title"><h3>Totaux du jour</h3><span class="muted-label" id="food-date-label"></span></div>
-      <div class="bar-row"><div class="bar-label"><span>Calories</span><span class="value" id="f-kcal">0 / 0 kcal</span></div><div class="bar-track"><div class="bar-fill blue" id="f-kcal-bar" style="width:0%"></div></div></div>
-      <div class="bar-row"><div class="bar-label"><span>Protéines</span><span class="value" id="f-protein">0 / 0 g</span></div><div class="bar-track"><div class="bar-fill green" id="f-protein-bar" style="width:0%"></div></div></div>
-      <div class="bar-row"><div class="bar-label"><span>Glucides</span><span class="value" id="f-carbs">0 / 0 g</span></div><div class="bar-track"><div class="bar-fill orange" id="f-carbs-bar" style="width:0%"></div></div></div>
-      <div class="bar-row"><div class="bar-label"><span>Lipides</span><span class="value" id="f-fat">0 / 0 g</span></div><div class="bar-track"><div class="bar-fill red" id="f-fat-bar" style="width:0%"></div></div></div>
-    </div>
-
-    <div id="meal-sections"></div>
-
-    <div class="card" style="border-style:dashed;">
-      <div class="card-title"><h3>Repas favoris</h3></div>
-      <div id="favorite-meals-list"><p class="empty-state">Aucun repas favori pour l'instant.</p></div>
-    </div>
-  </section>
-
-  <!-- ================= ENTRAINEMENT ================= -->
-  <section id="view-entrainement" class="view">
-    <div class="chip-row">
-      <button class="chip active" data-training-tab="muscu">🏋️ Musculation</button>
-      <button class="chip" data-training-tab="boxe">🥊 Boxe</button>
-      <button class="chip" data-training-tab="history">📜 Historique</button>
-    </div>
-
-    <div id="training-muscu-tab">
-      <div class="chip-row" id="program-chip-row">
-        <button class="chip active" data-program="A">A · Force haut</button>
-        <button class="chip" data-program="B">B · Jambes</button>
-        <button class="chip" data-program="C">C · Full body</button>
-      </div>
-      <div id="exercise-list"></div>
-      <button class="btn btn-primary mt-8" id="save-muscu-session">Enregistrer la séance</button>
-    </div>
-
-    <div id="training-boxe-tab" style="display:none;">
-      <div class="card">
-        <div class="card-title"><h3>Nouvelle séance de boxe</h3></div>
-        <label>Durée (minutes)</label>
-        <input type="number" id="boxe-duration" placeholder="90">
-        <div class="field-grid">
-          <div><label>Intensité (0–10)</label><input type="number" min="0" max="10" id="boxe-intensity"></div>
-          <div><label>Rounds</label><input type="number" id="boxe-rounds"></div>
-        </div>
-        <label>Sparring</label>
-        <select id="boxe-sparring"><option value="non">Non</option><option value="oui">Oui</option></select>
-        <div class="field-grid">
-          <div><label>Énergie (0–10)</label><input type="number" min="0" max="10" id="boxe-energy"></div>
-          <div><label>Fatigue (0–10)</label><input type="number" min="0" max="10" id="boxe-fatigue"></div>
-        </div>
-        <label>Sensations / commentaire</label>
-        <textarea id="boxe-notes" rows="3" placeholder="Bon cardio, manque encore d'explosivité..."></textarea>
-        <button class="btn btn-boxe mt-16" id="save-boxe-session">Enregistrer la séance de boxe</button>
-      </div>
-    </div>
-
-    <div id="training-history-tab" style="display:none;">
-      <div id="history-list"></div>
-    </div>
-  </section>
-
-  <!-- ================= PROGRESSION ================= -->
-  <section id="view-progression" class="view">
-    <div class="card">
-      <div class="card-title"><h3>Poids</h3><span class="muted-label" id="weight-avg-label"></span></div>
-      <svg class="sparkline" id="chart-weight" viewBox="0 0 300 60" preserveAspectRatio="none"></svg>
-      <div class="field-grid mt-8">
-        <div><label>Poids aujourd'hui (kg)</label><input type="number" step="0.1" id="input-weight"></div>
-        <div><label>Tour de taille (cm)</label><input type="number" step="0.1" id="input-waist"></div>
-      </div>
-      <button class="btn btn-primary mt-8" id="save-measurements">Enregistrer</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><h3>Sommeil & énergie</h3></div>
-      <div class="field-grid">
-        <div><label>Heures de sommeil</label><input type="number" step="0.1" id="input-sleep-hours"></div>
-        <div><label>Qualité (0–10)</label><input type="number" min="0" max="10" id="input-sleep-quality"></div>
-      </div>
-      <div class="field-grid-3 mt-8">
-        <div><label>Énergie</label><input type="number" min="0" max="10" id="input-energy"></div>
-        <div><label>Faim</label><input type="number" min="0" max="10" id="input-hunger"></div>
-        <div><label>Fatigue</label><input type="number" min="0" max="10" id="input-fatigue"></div>
-      </div>
-      <button class="btn btn-primary mt-8" id="save-wellbeing">Enregistrer</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><h3>Bilan de la semaine</h3></div>
-      <div id="weekly-report"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><h3>Meilleures performances</h3></div>
-      <div id="pr-list"></div>
-    </div>
-  </section>
-
-  <!-- ================= PROFIL ================= -->
-  <section id="view-profil" class="view">
-    <div class="card">
-      <div class="card-title"><h3>Profil</h3></div>
-      <label>Prénom</label><input type="text" id="p-name">
-      <div class="field-grid">
-        <div><label>Taille (cm)</label><input type="number" id="p-height"></div>
-        <div><label>Poids de départ (kg)</label><input type="number" step="0.1" id="p-start-weight"></div>
-      </div>
-      <label>Tour de taille de départ (cm)</label><input type="number" step="0.1" id="p-start-waist">
-      <label>Objectif</label>
-      <textarea id="p-goal" rows="2"></textarea>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><h3>Objectifs nutritionnels</h3></div>
-      <div class="field-grid">
-        <div><label>Calories / jour</label><input type="number" id="p-calorie"></div>
-        <div><label>Eau (L)</label><input type="number" step="0.1" id="p-water"></div>
-      </div>
-      <div class="field-grid-3">
-        <div><label>Protéines (g)</label><input type="number" id="p-protein"></div>
-        <div><label>Glucides (g)</label><input type="number" id="p-carb"></div>
-        <div><label>Lipides (g)</label><input type="number" id="p-fat"></div>
-      </div>
-      <button class="btn btn-primary mt-16" id="save-profile">Enregistrer le profil</button>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><h3>Planning de la semaine</h3></div>
-      <div id="planning-editor"></div>
-    </div>
-
-    <div class="card">
-      <div class="card-title"><h3>Export des données</h3></div>
-      <p class="small muted mt-8">Exporte l'historique complet pour analyse externe.</p>
-      <div class="btn-row mt-16">
-        <button class="btn btn-outline" id="export-csv">📤 Export CSV</button>
-        <button class="btn btn-outline" id="export-json">📤 Export JSON</button>
-      </div>
-      <button class="btn btn-ghost mt-8" id="export-summary">🤖 Exporter le bilan de la semaine (texte)</button>
-    </div>
-
-    <div class="card" style="border-color: var(--red);">
-      <div class="card-title"><h3>Réinitialiser</h3></div>
-      <p class="small muted">Supprime toutes les données stockées sur cet appareil.</p>
-      <button class="btn btn-outline mt-8" id="reset-data" style="color:var(--red); border-color:var(--red);">Réinitialiser toutes les données</button>
-    </div>
-  </section>
-
-</main>
-
-<nav class="bottom-nav">
-  <button data-view="accueil" class="active"><span class="nav-icon">🏠</span>Accueil</button>
-  <button data-view="alimentation"><span class="nav-icon">🍴</span>Alimentation</button>
-  <button data-view="entrainement"><span class="nav-icon">🏋️</span>Entraînement</button>
-  <button data-view="progression"><span class="nav-icon">📊</span>Progression</button>
-  <button data-view="profil"><span class="nav-icon">⚙️</span>Profil</button>
-</nav>
-
-<div class="toast" id="toast"></div>
-
-<!-- Templates -->
-<template id="tpl-food-modal-trigger">
-  <button class="btn btn-ghost btn-sm">+ Ajouter un aliment</button>
-</template>
-
-<script src="js/data.js"></script>
-<script src="js/app.js"></script>
-</body>
-</html>
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(
+    fetch(event.request).then(response => {
+      if (response && response.status === 200) {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+      }
+      return response;
+    }).catch(() => caches.match(event.request))
+  );
+});
