@@ -155,6 +155,80 @@ const FOOD_DATABASE = [
   { name: 'Compote sans sucres', unit: 'g', kcal100: 50, protein100: 0.3, carbs100: 11.0, fat100: 0.1, categories: ['collation', 'gouter'] },
   { name: 'Boisson soja', unit: 'ml', kcal100: 33, protein100: 3.3, carbs100: 0.7, fat100: 1.8, categories: ['collation', 'gouter'] },
 ];
+const RECIPE_DATABASE = [
+  {
+    id: 'r1', name: 'Bowl protéiné petit-déj', category: 'petitDej', portions: 1,
+    kcal: 540, protein: 35, carbs: 58, fat: 17,
+    ingredients: ['200g skyr', '60g flocons d\'avoine', '1 banane', '15g beurre de cacahuète', 'cannelle'],
+    instructions: ['Mélanger le skyr et les flocons d\'avoine, laisser reposer 5 min.', 'Trancher la banane par-dessus.', 'Ajouter le beurre de cacahuète et une pincée de cannelle.'],
+  },
+  {
+    id: 'r2', name: 'Omelette avocat toast complet', category: 'petitDej', portions: 1,
+    kcal: 510, protein: 32, carbs: 28, fat: 27,
+    ingredients: ['3 œufs entiers', '2 tranches pain complet', '1/2 avocat', 'sel, poivre'],
+    instructions: ['Battre les œufs et cuire l\'omelette à la poêle.', 'Toaster le pain, écraser l\'avocat dessus.', 'Servir l\'omelette avec les toasts.'],
+  },
+  {
+    id: 'r3', name: 'Poulet curry riz', category: 'dejeuner', portions: 4,
+    kcal: 640, protein: 44, carbs: 62, fat: 18,
+    ingredients: ['600g poulet (blanc)', '300g riz basmati (cru)', '2 c.à.s curry en poudre', '400ml lait de coco léger', 'oignon, ail', '1 c.à.s huile d\'olive'],
+    instructions: ['Faire revenir l\'oignon et l\'ail dans l\'huile.', 'Ajouter le poulet coupé en dés, saisir puis saupoudrer de curry.', 'Verser le lait de coco, laisser mijoter 15 min.', 'Servir sur le riz basmati cuit.'],
+  },
+  {
+    id: 'r4', name: 'Saumon riz basmati brocolis', category: 'diner', portions: 2,
+    kcal: 610, protein: 40, carbs: 54, fat: 23,
+    ingredients: ['300g pavé de saumon', '160g riz basmati (cru)', '300g brocolis', '1 c.à.s huile d\'olive', 'citron'],
+    instructions: ['Cuire le riz basmati.', 'Cuire le saumon à la poêle ou au four 12-15 min.', 'Cuire les brocolis vapeur.', 'Assembler avec un filet d\'huile d\'olive et de citron.'],
+  },
+  {
+    id: 'r5', name: 'Bœuf haché, haricots verts, patate douce', category: 'dejeuner', portions: 2,
+    kcal: 580, protein: 38, carbs: 46, fat: 22,
+    ingredients: ['300g steak haché 5%', '400g patate douce', '300g haricots verts', '1 c.à.s huile d\'olive', 'ail, thym'],
+    instructions: ['Couper la patate douce en dés, rôtir au four 25 min avec un filet d\'huile.', 'Cuire les haricots verts à la vapeur.', 'Saisir le bœuf haché à la poêle avec ail et thym.', 'Assembler le tout.'],
+  },
+  {
+    id: 'r6', name: 'Chili con carne maison', category: 'diner', portions: 4,
+    kcal: 615, protein: 42, carbs: 54, fat: 20,
+    ingredients: ['500g bœuf haché', '400g haricots rouges cuits', '400g tomates concassées', '200g riz blanc (cru)', 'oignon, ail, cumin, paprika'],
+    instructions: ['Faire revenir oignon et ail, ajouter le bœuf haché et saisir.', 'Ajouter tomates, haricots rouges, épices.', 'Laisser mijoter 25 min à couvert.', 'Servir avec le riz cuit.'],
+  },
+  {
+    id: 'r7', name: 'Buddha bowl thon quinoa avocat', category: 'dejeuner', portions: 2,
+    kcal: 605, protein: 39, carbs: 48, fat: 25,
+    ingredients: ['2 boîtes thon au naturel', '160g quinoa (cru)', '1 avocat', 'tomates cerises, concombre', 'huile d\'olive, citron'],
+    instructions: ['Cuire le quinoa selon les instructions du paquet.', 'Égoutter le thon.', 'Couper avocat, tomates et concombre.', 'Assembler en bowl, assaisonner huile d\'olive et citron.'],
+  },
+  {
+    id: 'r8', name: 'Poêlée dinde, légumes, riz complet', category: 'diner', portions: 2,
+    kcal: 555, protein: 42, carbs: 54, fat: 13,
+    ingredients: ['300g escalope de dinde', '160g riz complet (cru)', '300g poivrons + courgettes', '1 c.à.s huile d\'olive', 'sauce soja'],
+    instructions: ['Cuire le riz complet.', 'Couper la dinde en lamelles, saisir à la poêle.', 'Ajouter les légumes émincés, faire sauter 8-10 min.', 'Déglacer avec un trait de sauce soja, servir sur le riz.'],
+  },
+  {
+    id: 'r9', name: 'Pâtes complètes thon tomate', category: 'dejeuner', portions: 2,
+    kcal: 635, protein: 37, carbs: 76, fat: 15,
+    ingredients: ['180g pâtes complètes (sèches)', '2 boîtes thon au naturel', '400g tomates concassées', 'ail, olives, origan'],
+    instructions: ['Cuire les pâtes complètes al dente.', 'Faire revenir l\'ail, ajouter les tomates concassées, laisser réduire 10 min.', 'Ajouter le thon égoutté et les olives.', 'Mélanger avec les pâtes égouttées.'],
+  },
+  {
+    id: 'r10', name: 'Wrap poulet crudités', category: 'dejeuner', portions: 2,
+    kcal: 495, protein: 34, carbs: 44, fat: 18,
+    ingredients: ['2 galettes de blé complètes', '250g blanc de poulet cuit', 'salade, tomate, concombre', '2 c.à.s fromage blanc 0%', 'moutarde'],
+    instructions: ['Émincer le poulet cuit.', 'Tartiner la galette de fromage blanc et moutarde.', 'Garnir de poulet et crudités, rouler serré.'],
+  },
+  {
+    id: 'r11', name: 'Shaker post-training banane avoine', category: 'collation', portions: 1,
+    kcal: 375, protein: 34, carbs: 46, fat: 6,
+    ingredients: ['30g whey protéine', '1 banane', '30g flocons d\'avoine', '250ml lait demi-écrémé', 'glaçons'],
+    instructions: ['Mixer tous les ingrédients au blender jusqu\'à consistance lisse.', 'Servir immédiatement après la séance.'],
+  },
+  {
+    id: 'r12', name: 'Yaourt grec, fruits rouges, amandes', category: 'gouter', portions: 1,
+    kcal: 320, protein: 22, carbs: 24, fat: 15,
+    ingredients: ['200g yaourt grec 0%', '100g fruits rouges (fraises/myrtilles)', '15g amandes', 'filet de miel'],
+    instructions: ['Verser le yaourt grec dans un bol.', 'Ajouter les fruits rouges et les amandes concassées.', 'Ajouter un filet de miel si besoin.'],
+  },
+];
 function defaultData() {
   return {
     version: APP_VERSION,
