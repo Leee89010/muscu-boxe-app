@@ -6,11 +6,12 @@ const DAY_NAMES_FR = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','
 const MEAL_LABELS = { petitDej: '🌅 Petit-déjeuner', dejeuner: '☀️ Déjeuner', gouter: '🍎 Goûter', diner: '🌙 Dîner', collation: '➕ Collation' };
 const RING_COLORS = { kcal: '#3d7fff', protein: '#34c77b', carbs: '#ff9f43', fat: '#e6394a' };
 
-let state = { trainingTab: 'muscu', currentProgram: 'A', currentSets: {} };
+let state = { trainingTab: 'muscu', currentProgram: 'A', currentSets: {}, selectedDate: null };
 let restTimerInterval = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   Store.load();
+  state.selectedDate = Store.today();
   initNav();
   initAccueil();
   initAlimentation();
@@ -36,7 +37,45 @@ function toast(msg) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 1800);
 }
+function formatDateLabel(dateStr) {
+  if (dateStr === Store.today()) return "Aujourd'hui";
+  const d = new Date(dateStr + 'T00:00:00');
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+  if (dateStr === yesterday.toISOString().slice(0, 10)) return 'Hier';
+  return `${DAY_NAMES_FR[d.getDay()]} ${d.getDate()} ${d.toLocaleDateString('fr-FR', { month: 'long' })}`;
+}
 
+function changeDate(delta) {
+  const d = new Date(state.selectedDate + 'T00:00:00');
+  d.setDate(d.getDate() + delta);
+  const newDate = d.toISOString().slice(0, 10);
+  if (newDate > Store.today()) return;
+  state.selectedDate = newDate;
+  renderAccueil();
+  renderAlimentation();
+  renderDateNav();
+}
+
+function goToToday() {
+  state.selectedDate = Store.today();
+  renderAccueil();
+  renderAlimentation();
+  renderDateNav();
+}
+
+function renderDateNav() {
+  const isToday = state.selectedDate === Store.today();
+  const html = `
+    <button class="date-nav-btn" onclick="changeDate(-1)">‹</button>
+    <span class="date-nav-label">${formatDateLabel(state.selectedDate)}</span>
+    <button class="date-nav-btn" onclick="changeDate(1)" ${isToday ? 'disabled' : ''}>›</button>
+    ${!isToday ? '<button class="date-nav-today" onclick="goToToday()">Aujourd\'hui</button>' : ''}
+  `;
+  ['date-nav-accueil', 'date-nav-alimentation'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  });
+}
 function fmt(n, d = 0) {
   if (n === null || n === undefined || isNaN(n)) return '—';
   return Number(n).toLocaleString('fr-FR', { minimumFractionDigits: d, maximumFractionDigits: d });
@@ -85,7 +124,7 @@ function renderHeader() {
 // ============================================================
 function initAccueil() {
   document.getElementById('chk-creatine').addEventListener('change', e => {
-    const log = Store.getDailyLog(Store.today());
+    const log = Store.getDailyLog(state.selectedDate);
     log.creatine = e.target.checked;
     Store.save();
   });
@@ -97,14 +136,14 @@ function initAccueil() {
 }
 
 function bumpWhey(delta) {
-  const log = Store.getDailyLog(Store.today());
+  const log = Store.getDailyLog(state.selectedDate);
   log.wheyCount = Math.max(0, (log.wheyCount || 0) + delta);
   Store.save();
   renderAccueil();
 }
 
 function bumpWater(amount, reset) {
-  const log = Store.getDailyLog(Store.today());
+  const log = Store.getDailyLog(state.selectedDate);
   log.water = reset ? 0 : Math.round(((log.water || 0) + amount) * 100) / 100;
   Store.save();
   renderAccueil();
@@ -123,10 +162,11 @@ function ringSVG(pct, color, size = 62, stroke = 7) {
 
 function renderAccueil() {
   const d = Store.load();
-  const today = Store.today();
+  const today = state.selectedDate;
   const log = Store.getDailyLog(today);
   const totals = Store.totalsForDate(today);
   const p = d.profile;
+  renderDateNav();
 
   document.getElementById('today-label').textContent = 'Objectif ' + p.calorieTarget + ' kcal';
   document.getElementById('chk-creatine').checked = !!log.creatine;
@@ -260,7 +300,7 @@ function renderRecipes() {
 function addRecipeToMeal(recipeId) {
   const r = RECIPE_DATABASE.find(x => x.id === recipeId);
   if (!r) return;
-  Store.getMealsForDate(Store.today())[r.category].push({
+ Store.getMealsForDate(state.selectedDate)[r.category].push({
     name: r.name, qty: 1, unit: ' portion', kcal: r.kcal, protein: r.protein, carbs: r.carbs, fat: r.fat,
   });
   Store.save();
@@ -269,8 +309,9 @@ function addRecipeToMeal(recipeId) {
   toast(r.name + ' ajouté à ton ' + MEAL_LABELS[r.category].replace(/^\S+\s/, ''));
 }
 function renderAlimentation() {
-  const today = Store.today();
-  document.getElementById('food-date-label').textContent = "Aujourd'hui";
+  const today = state.selectedDate;
+  document.getElementById('food-date-label').textContent = formatDateLabel(today);
+  renderDateNav();
   const totals = Store.totalsForDate(today);
   const p = Store.load().profile;
   setBar('f-kcal', totals.kcal, p.calorieTarget, ' kcal');
@@ -364,7 +405,7 @@ function submitFood(mealKey) {
     carbs: Number(g('nf-carbs').value) || 0,
     fat: Number(g('nf-fat').value) || 0,
   };
-  Store.getMealsForDate(Store.today())[mealKey].push(item);
+  Store.getMealsForDate(state.selectedDate)[mealKey].push(item);
   Store.save();
   renderAlimentation();
   renderAccueil();
@@ -372,7 +413,7 @@ function submitFood(mealKey) {
 }
 
 function removeFood(mealKey, idx) {
-  Store.getMealsForDate(Store.today())[mealKey].splice(idx, 1);
+  Store.getMealsForDate(state.selectedDate)[mealKey].splice(idx, 1);
   Store.save();
   renderAlimentation();
   renderAccueil();
@@ -591,7 +632,7 @@ function saveMuscuSession() {
     });
   });
   if (!sets.length) { toast('Renseigne au moins une série'); return; }
-  Store.addWorkout({ date: Store.today(), kind: 'muscu', program: prog, sets });
+  Store.addWorkout({ date: state.selectedDate, kind: 'muscu', program: prog, sets });
   state.currentSets[prog] = {};
   renderExerciseList();
   renderAccueil();
@@ -600,7 +641,7 @@ function saveMuscuSession() {
 
 function saveBoxeSession() {
   const w = {
-    date: Store.today(),
+    date: state.selectedDate,
     kind: 'boxe',
     durationMin: Number(document.getElementById('boxe-duration').value) || null,
     intensity: Number(document.getElementById('boxe-intensity').value) || null,
@@ -636,7 +677,7 @@ function renderHistory() {
 // ============================================================
 function initProgression() {
   document.getElementById('save-measurements').addEventListener('click', () => {
-    const log = Store.getDailyLog(Store.today());
+    const log = Store.getDailyLog(state.selectedDate);
     const w = document.getElementById('input-weight').value;
     const wa = document.getElementById('input-waist').value;
     if (w) log.weight = Number(w);
@@ -647,8 +688,8 @@ function initProgression() {
     toast('Mesures enregistrées');
   });
 
-  document.getElementById('save-wellbeing').addEventListener('click', () => {
-    const log = Store.getDailyLog(Store.today());
+document.getElementById('save-wellbeing').addEventListener('click', () => {
+    const log = Store.getDailyLog(state.selectedDate);
     log.sleepHours = Number(document.getElementById('input-sleep-hours').value) || log.sleepHours;
     log.sleepQuality = Number(document.getElementById('input-sleep-quality').value) || log.sleepQuality;
     log.energy = Number(document.getElementById('input-energy').value) || log.energy;
