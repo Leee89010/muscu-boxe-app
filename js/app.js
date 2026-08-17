@@ -367,6 +367,36 @@ function pictogramSVG(pattern, color, exId) {
       </g>
     </svg>`;
   }
+  
+  function exercisePictureHTML(ex) {
+  const mediaId = EXERCISE_MEDIA[ex.id];
+  if (!mediaId) return pictogramSVG(ex.pattern, RING_COLORS.kcal, ex.id);
+  const base = `https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/${mediaId}/`;
+  return `<div class="ex-photo-wrap" data-ex-photo="${ex.id}">
+    <img src="${base}0.jpg" class="ex-photo ex-photo-a" onerror="handlePhotoError('${ex.id}')" onload="startPhotoLoop('${ex.id}')">
+    <img src="${base}1.jpg" class="ex-photo ex-photo-b" onerror="handlePhotoError('${ex.id}')">
+    <div class="ex-photo-fallback" data-fallback="${ex.id}">${pictogramSVG(ex.pattern, RING_COLORS.kcal, ex.id)}</div>
+  </div>`;
+}
+  
+function handlePhotoError(exId) {
+  const wrap = document.querySelector(`[data-ex-photo="${exId}"]`);
+  if (!wrap || wrap.dataset.failed) return;
+  wrap.dataset.failed = '1';
+  wrap.querySelectorAll('.ex-photo').forEach(img => img.style.display = 'none');
+  const fb = wrap.querySelector('.ex-photo-fallback');
+  if (fb) fb.style.display = 'flex';
+}
+  
+function startPhotoLoop(exId) {
+  const wrap = document.querySelector(`[data-ex-photo="${exId}"]`);
+  if (!wrap || wrap.dataset.looping) return;
+  wrap.dataset.looping = '1';
+  const a = wrap.querySelector('.ex-photo-a');
+  const b = wrap.querySelector('.ex-photo-b');
+  gsap.to([a], { opacity: 0, duration: 0.5, delay: 0.9, repeat: -1, yoyo: true, repeatDelay: 0.9, ease: 'power1.inOut' });
+  gsap.to([b], { opacity: 1, duration: 0.5, delay: 0.9, repeat: -1, yoyo: true, repeatDelay: 0.9, ease: 'power1.inOut' });
+}
   if (pattern === 'hold') {
     return `<svg width="40" height="40" viewBox="0 0 44 44">
       <rect data-picto="${exId}" x="14" y="14" width="16" height="16" rx="4" fill="${color}" style="transform-origin:22px 22px;"/>
@@ -402,6 +432,10 @@ function muscleDiagramSVG(active, exId) {
 }
 function animateExerciseVisuals(exercises) {
   exercises.forEach(ex => {
+    if (EXERCISE_MEDIA[ex.id]) {
+      gsap.to(`[data-ex="${ex.id}"].muscle-active`, { opacity: 0.55, duration: 1.1, ease: 'sine.inOut', repeat: -1, yoyo: true, stagger: 0.12 });
+      return;
+    }
     const target = `[data-picto="${ex.id}"]`;
     if (ex.pattern === 'push') {
       gsap.to(target, { y: -7, duration: 0.9, ease: 'power1.inOut', repeat: -1, yoyo: true });
@@ -449,7 +483,7 @@ function renderExerciseList() {
         <div class="card-title"><h3>${ex.name}</h3></div>
         <div class="exercise-visual-row">
           <div class="visual-tile">
-            ${pictogramSVG(ex.pattern, RING_COLORS.kcal, ex.id)}
+             ${exercisePictureHTML(ex)}
             <span class="visual-caption">${PATTERN_LABELS[ex.pattern] || 'Mouvement'}</span>
           </div>
           <div class="visual-divider"></div>
