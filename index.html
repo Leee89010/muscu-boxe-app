@@ -26,14 +26,15 @@
   <!-- ================= ACCUEIL ================= -->
   <section id="view-accueil" class="view active">
 
-    <div class="card">
-      <div class="card-title"><h3>Aujourd'hui</h3><span class="muted-label" id="today-label"></span></div>
-      <div class="rings-row" id="macro-rings"></div>
-      <div class="bar-row">
+  <div class="bar-row">
         <div class="bar-label"><span>Eau</span><span class="value" id="water-value">0 / 2,8 L</span></div>
         <div class="bar-track"><div class="bar-fill blue" id="water-bar" style="width:0%"></div></div>
+        <div class="water-actions">
+          <button class="btn btn-ghost btn-sm" id="water-add-250">+250 ml</button>
+          <button class="btn btn-ghost btn-sm" id="water-add-500">+500 ml</button>
+          <button class="btn btn-ghost btn-sm" id="water-reset">↺</button>
+        </div>
       </div>
-    </div>
 
     <div class="card">
       <div class="card-title"><h3>Compléments</h3></div>
