@@ -44,11 +44,16 @@ function formatDateLabel(dateStr) {
   if (dateStr === yesterday.toISOString().slice(0, 10)) return 'Hier';
   return `${DAY_NAMES_FR[d.getDay()]} ${d.getDate()} ${d.toLocaleDateString('fr-FR', { month: 'long' })}`;
 }
-
+function toLocalDateStr(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
 function changeDate(delta) {
   const d = new Date(state.selectedDate + 'T00:00:00');
   d.setDate(d.getDate() + delta);
-  const newDate = d.toISOString().slice(0, 10);
+  const newDate = toLocalDateStr(d);
   if (newDate > Store.today()) return;
   state.selectedDate = newDate;
   renderAccueil();
