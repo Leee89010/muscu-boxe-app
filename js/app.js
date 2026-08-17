@@ -91,6 +91,9 @@ function initAccueil() {
   });
   document.getElementById('whey-minus').addEventListener('click', () => bumpWhey(-1));
   document.getElementById('whey-plus').addEventListener('click', () => bumpWhey(1));
+  document.getElementById('water-add-250').addEventListener('click', () => bumpWater(0.25));
+  document.getElementById('water-add-500').addEventListener('click', () => bumpWater(0.5));
+  document.getElementById('water-reset').addEventListener('click', () => bumpWater(0, true));
 }
 
 function bumpWhey(delta) {
@@ -99,7 +102,12 @@ function bumpWhey(delta) {
   Store.save();
   renderAccueil();
 }
-
+function bumpWater(amount, reset) {
+  const log = Store.getDailyLog(Store.today());
+  log.water = reset ? 0 : Math.round(((log.water || 0) + amount) * 100) / 100;
+  Store.save();
+  renderAccueil();
+}
 function ringSVG(pct, color, size = 62, stroke = 7) {
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
