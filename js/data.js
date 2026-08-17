@@ -54,6 +54,30 @@ const WORKOUT_PROGRAM = {
   },
 };
 const PATTERN_LABELS = { push: 'Poussée', pull: 'Tirage', squat: 'Flexion jambes', raise: 'Élévation', rotate: 'Rotation', hold: 'Gainage isométrique' };
+const EXERCISE_MEDIA = {
+  a2: 'Dumbbell_Incline_Bench_Press',
+  a3: 'Pullups',
+  a4: 'Dumbbell_Shoulder_Press',
+  a5: 'Seated_Cable_Rows',
+  a6: 'Side_Lateral_Raise',
+  a7: 'Alternate_Incline_Dumbbell_Curl',
+  b1: 'Box_Jump_Multiple_Response',
+  b2: 'Barbell_Hack_Squat',
+  b3: 'Dumbbell_Bulgarian_Split_Squat',
+  b4: 'Barbell_Hip_Thrust',
+  b5: 'Lying_Leg_Curls',
+  b6: 'Standing_Calf_Raises',
+  b7: 'Hanging_Leg_Raise',
+  c2: 'Barbell_Incline_Bench_Press_-_Medium_Grip',
+  c3: 'Close-Grip_Front_Lat_Pulldown',
+  c4: 'Leg_Press',
+  c5: 'Seated_Cable_Rows',
+  c6: 'Side_Lateral_Raise',
+  c7: 'Preacher_Curl',
+  c8: 'Triceps_Pushdown',
+  c9: 'Cable_Crunch',
+  // a1, a8, c1 : pas de correspondance fiable trouvée -> pictogramme abstrait conservé
+};
 const PLANNING_DEFAULT = {
   LUN: 'boxe', MAR: 'boxe', MER: 'A', JEU: 'boxe', VEN: 'B', SAM: 'repos', DIM: 'C',
 };
