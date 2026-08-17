@@ -481,3 +481,38 @@ nav.bottom-nav button.active { color: var(--blue); }
 }
 .water-actions .btn { flex: 1; }
 #water-reset { flex: 0 0 auto; padding: 8px 12px; }
+.date-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.date-nav-btn {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.date-nav-btn:disabled { opacity: 0.3; }
+.date-nav-label {
+  font-family: var(--font-display);
+  font-size: 16px;
+  letter-spacing: 0.02em;
+  min-width: 140px;
+  text-align: center;
+}
+.date-nav-today {
+  background: none;
+  border: none;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: underline;
+}
