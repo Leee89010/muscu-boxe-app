@@ -297,9 +297,26 @@ function renderRecipes() {
         <button class="btn btn-primary btn-sm" onclick="addRecipeToMeal('${r.id}')">+ Ajouter</button>
       </div>
       <div class="small muted mt-8">${MEAL_LABELS[r.category]} · ${r.portions} portion${r.portions > 1 ? 's' : ''} · ${fmt(r.kcal)} kcal · P${fmt(r.protein)} G${fmt(r.carbs)} L${fmt(r.fat)} par portion</div>
-      <div class="small mt-8" style="color:var(--muted);">${r.ingredients.join(' · ')}</div>
+      <button class="btn btn-ghost btn-sm mt-8" onclick="toggleRecipeDetail('${r.id}')">Voir la recette</button>
+      <div id="recipe-detail-${r.id}" style="display:none;" class="mt-16">
+        <div class="section-title" style="margin-top:0;">Ingrédients</div>
+        <ul style="margin:0 0 12px; padding-left:18px; font-size:13px; line-height:1.7; color:var(--text);">
+          ${r.ingredients.map(i => `<li>${i}</li>`).join('')}
+        </ul>
+        <div class="section-title">Préparation</div>
+        <ol style="margin:0; padding-left:18px; font-size:13px; line-height:1.7; color:var(--text);">
+          ${r.instructions.map(step => `<li>${step}</li>`).join('')}
+        </ol>
+      </div>
     </div>
   `).join('');
+}
+
+function toggleRecipeDetail(recipeId) {
+  const el = document.getElementById('recipe-detail-' + recipeId);
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? 'block' : 'none';
+  if (isHidden) gsap.fromTo(el, { opacity: 0, y: -6 }, { opacity: 1, y: 0, duration: 0.25, ease: 'power1.out' });
 }
 
 function addRecipeToMeal(recipeId) {
