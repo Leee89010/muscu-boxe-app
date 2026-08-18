@@ -373,8 +373,8 @@ function setBar(prefix, val, target, suffix) {
 function openAddFood(mealKey) {
   const holder = document.getElementById('add-food-form-' + mealKey);
   if (holder.innerHTML) { holder.innerHTML = ''; return; }
-  const relevant = FOOD_DATABASE.filter(f => f.categories.includes(mealKey));
-  const options = relevant.map(f => `<option value="${f.name}">${f.name}</option>`).join('');
+  const relevant = Store.getAllFoodsFor(mealKey);
+  const options = relevant.map(f => `<option value="${f.name}">${f.name}${f.custom ? ' ★' : ''}</option>`).join('');
   holder.innerHTML = `
     <div class="mt-16" style="border-top:1px solid var(--border); padding-top:12px;">
       <label>Aliment pré-enregistré</label>
@@ -394,6 +394,9 @@ function openAddFood(mealKey) {
         <div><label>Gluc. (g)</label><input type="number" id="nf-carbs-${mealKey}"></div>
       </div>
       <label>Lipides (g)</label><input type="number" id="nf-fat-${mealKey}">
+      <label style="display:flex; align-items:center; gap:8px; margin-top:12px;">
+        <input type="checkbox" id="nf-save-${mealKey}" style="width:auto;"> Enregistrer cet aliment dans ma base pour la prochaine fois
+      </label>
       <button class="btn btn-primary mt-16" onclick="submitFood('${mealKey}')">Ajouter ce repas</button>
     </div>`;
 }
@@ -401,7 +404,7 @@ function openAddFood(mealKey) {
 function applyFoodDb(mealKey) {
   const sel = document.getElementById('nf-db-' + mealKey);
   if (sel.value === '') return;
-  const food = FOOD_DATABASE.find(f => f.name === sel.value);
+  const food = Store.getAllFoodsFor(mealKey).find(f => f.name === sel.value);
   if (!food) return;
   const qtyInput = document.getElementById('nf-qty-' + mealKey);
   if (!qtyInput.value) qtyInput.value = 100;
@@ -418,20 +421,32 @@ function submitFood(mealKey) {
   const g = id => document.getElementById(id + '-' + mealKey);
   const name = g('nf-name').value.trim();
   if (!name) { toast('Indique un nom d\'aliment'); return; }
-  const item = {
-    name,
-    qty: g('nf-qty').value,
-    unit: g('nf-unit').value,
-    kcal: Number(g('nf-kcal').value) || 0,
-    protein: Number(g('nf-protein').value) || 0,
-    carbs: Number(g('nf-carbs').value) || 0,
-    fat: Number(g('nf-fat').value) || 0,
-  };
+  const qty = Number(g('nf-qty').value) || 100;
+  const kcal = Number(g('nf-kcal').value) || 0;
+  const protein = Number(g('nf-protein').value) || 0;
+  const carbs = Number(g('nf-carbs').value) || 0;
+  const fat = Number(g('nf-fat').value) || 0;
+
+  const item = { name, qty: g('nf-qty').value, unit: g('nf-unit').value, kcal, protein, carbs, fat };
   Store.getMealsForDate(state.selectedDate)[mealKey].push(item);
+
+  const saveCheckbox = g('nf-save');
+  if (saveCheckbox && saveCheckbox.checked) {
+    Store.addCustomFood({
+      name, unit: g('nf-unit').value || 'g', custom: true, categories: [mealKey],
+      kcal100: Math.round(kcal / qty * 100),
+      protein100: Math.round(protein / qty * 100 * 10) / 10,
+      carbs100: Math.round(carbs / qty * 100 * 10) / 10,
+      fat100: Math.round(fat / qty * 100 * 10) / 10,
+    });
+    toast('Aliment ajouté et enregistré dans ta base ★');
+  } else {
+    toast('Aliment ajouté');
+  }
+
   Store.save();
   renderAlimentation();
   renderAccueil();
-  toast('Aliment ajouté');
 }
 
 function removeFood(mealKey, idx) {
