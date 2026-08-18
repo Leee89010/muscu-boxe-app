@@ -222,8 +222,8 @@ document.getElementById('whey-count').textContent = (log.wheyCount || 0) + ' (' 
 
 function renderWeekStrip() {
   const d = Store.load();
-  const dates = Store.lastNDates(7);
-  const todayStr = Store.today();
+  const dates = Store.lastNDates(7, state.selectedDate);
+  const todayStr = state.selectedDate;
   let html = '';
   const kcalList = [], proteinList = [], sleepList = [], energyList = [];
   let boxeCount = 0, muscuCount = 0;
@@ -253,7 +253,7 @@ function renderWeekStrip() {
   document.getElementById('week-strip').innerHTML = html;
 
   const avg = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
-  const avgWeight = Store.weightAverage7d();
+    const avgWeight = Store.weightAverage7d(state.selectedDate);
   const stats = [
     ['Poids moyen', avgWeight != null ? fmt(avgWeight,1) + ' kg' : '—'],
     ['Séances boxe', boxeCount + ' / 3'],
