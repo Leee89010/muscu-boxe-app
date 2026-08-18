@@ -337,19 +337,22 @@ const Store = {
     return workout;
   },
 
-  lastNDates(n) {
+    lastNDates(n, endDateStr) {
     const dates = [];
-    const now = new Date();
+    const end = endDateStr ? new Date(endDateStr + 'T00:00:00') : new Date();
     for (let i = n - 1; i >= 0; i--) {
-      const dt = new Date(now);
-      dt.setDate(now.getDate() - i);
-      dates.push(dt.toISOString().slice(0, 10));
+      const dt = new Date(end);
+      dt.setDate(end.getDate() - i);
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, '0');
+      const day = String(dt.getDate()).padStart(2, '0');
+      dates.push(`${y}-${m}-${day}`);
     }
     return dates;
   },
 
-  weightAverage7d(fromDate) {
-    const dates = this.lastNDates(7);
+   weightAverage7d(endDateStr) {
+    const dates = this.lastNDates(7, endDateStr);
     const d = this.load();
     const weights = dates.map(dt => d.dailyLogs[dt] && d.dailyLogs[dt].weight).filter(w => w != null && w !== '');
     if (!weights.length) return null;
