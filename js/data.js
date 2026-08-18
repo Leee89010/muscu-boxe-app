@@ -249,6 +249,7 @@ function defaultData() {
     dailyLogs: {},   // date -> {weight, waist, water, sleepHours, sleepQuality, energy, hunger, fatigue, motivation, creatine, wheyCount, notes}
     meals: {},       // date -> {petitDej:[], dejeuner:[], gouter:[], diner:[], collation:[]}
     favoriteMeals: [],
+    customFoods: [],
     workouts: [],     // {id, date, kind:'muscu'|'boxe', program:'A'|'B'|'C', durationMin, intensity, sparring, rounds, energy, fatigue, notes, sets:[{exerciseId,setNumber,weight,reps,rir}]}
   };
 }
@@ -299,7 +300,21 @@ const Store = {
     }
     return d.meals[date];
   },
+  
+  getAllFoodsFor(mealKey) {
+    const d = this.load();
+    const custom = (d.customFoods || []).filter(f => f.categories.includes(mealKey));
+    const preset = FOOD_DATABASE.filter(f => f.categories.includes(mealKey));
+    return [...custom, ...preset];
+  },
 
+  addCustomFood(food) {
+    const d = this.load();
+    if (!d.customFoods) d.customFoods = [];
+    d.customFoods.push(food);
+    this.save();
+  },
+  
   totalsForDate(date) {
     const meals = this.getMealsForDate(date);
     const totals = { kcal: 0, protein: 0, carbs: 0, fat: 0 };
